@@ -1,0 +1,54 @@
+---
+import '@fontsource/instrument-serif/latin-400.css';
+import '@fontsource/instrument-serif/latin-400-italic.css';
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '../styles/global.css';
+import cfg from '../../site.config.json';
+import { ui, type Lang } from '../i18n';
+interface Props { title: string; description: string; lang: Lang; path: string; type?: 'website' | 'article'; home?: boolean }
+const { title, description, lang, path, type = 'website', home = false } = Astro.props;
+const t = ui[lang];
+const url = (l: Lang) => cfg.url + (l === 'en' ? '/en' : '') + path;
+const other: Lang = lang === 'zh' ? 'en' : 'zh';
+const full = home ? `KUDEW · ${t.tag}` : `${title} · KUDEW`;
+const ld = home ? { '@context': 'https://schema.org', '@type': 'WebSite', name: cfg.name, url: cfg.url, inLanguage: lang === 'zh' ? 'zh-CN' : 'en' } : null;
+const links = [['GitHub', cfg.social.github], ['X', cfg.social.x], ['Email', cfg.social.email && 'mailto:' + cfg.social.email]].filter(([, h]) => h).concat([['RSS', (lang === 'en' ? '/en' : '') + '/rss.xml']]);
+---
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{full}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={url(lang)} />
+  <link rel="alternate" hreflang="zh-CN" href={url('zh')} />
+  <link rel="alternate" hreflang="en" href={url('en')} />
+  <link rel="alternate" hreflang="x-default" href={url('zh')} />
+  <link rel="alternate" type="application/rss+xml" title="KUDEW" href={(lang === 'en' ? '/en' : '') + '/rss.xml'} />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content={type} />
+  <meta property="og:title" content={full} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={url(lang)} />
+  <meta property="og:image" content={cfg.url + '/og-default.png'} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script is:inline>try{var t=localStorage.getItem('kudew-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+  {ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+</head>
+<body>
+  <div class="ctl">
+    <a href={(other === 'en' ? '/en' : '') + path} hreflang={other === 'en' ? 'en' : 'zh-CN'} aria-label={t.otherLabel}>{t.other}</a>
+    <button id="pal" aria-label="Search (Ctrl/Cmd + K)">⌘K</button>
+    <button id="theme" aria-label="Toggle light / dark">◐</button>
+  </div>
+  <main class="wrap"><slot /></main>
+  <footer class="wrap foot">
+    <span>KUDEW © {new Date().getFullYear()}</span><span>{t.footer}</span>
+    <span>{links.map(([n, h]) => <a href={h as string}>{n}</a>)}</span>
+  </footer>
+  <script is:inline src="/theme.js"></script>
+  <script is:inline src="/extras.js"></script>
+</body>
+</html>

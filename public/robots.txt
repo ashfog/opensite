@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kudew.com/sitemap-index.xml

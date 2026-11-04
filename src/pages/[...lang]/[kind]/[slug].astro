@@ -1,0 +1,29 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { ui, type Lang } from '../../../i18n';
+export async function getStaticPaths() {
+  const out = [];
+  for (const kind of ['projects', 'writing'] as const)
+    for (const e of await getCollection(kind)) {
+      if (e.data.draft) continue;
+      const [l, , slug] = e.id.split('/');
+      out.push({ params: { lang: l === 'en' ? 'en' : undefined, kind, slug }, props: { entry: e, lang: l as Lang } });
+    }
+  return out;
+}
+const { entry, lang } = Astro.props;
+const { kind, slug } = Astro.params;
+const { Content } = await render(entry);
+const t = ui[lang];
+const d = entry.data;
+---
+<Base title={d.title} description={d.summary} lang={lang} path={`/${kind}/${slug}/`} type="article">
+  <p><a class="tag" href={lang === 'en' ? '/en/' : '/'}>{t.back}</a></p>
+  <article class="prose">
+    <h1 class="post">{d.title}</h1>
+    <p class="tag"><time datetime={d.date.toISOString()}>{d.date.toISOString().slice(0, 10)}</time>{d.tags.length > 0 && ' · ' + d.tags.join(' · ')}</p>
+    <Content />
+    {d.url && <p><a href={d.url} rel="noopener">{d.url}</a></p>}
+  </article>
+</Base>
