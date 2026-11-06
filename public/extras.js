@@ -47,8 +47,4 @@ d.addEventListener('keydown',function(e){
   else if(e.key==='/'&&!typing&&!(dlg&&dlg.open)){e.preventDefault();open()}});
 var pb=$('#pal');if(pb)pb.onclick=open;
 var rb=$('#rnd');if(rb)rb.onclick=function(){var a=d.querySelectorAll('#links .row');if(a.length)window.open(a[Math.floor(Math.random()*a.length)].href,'_blank','noopener')};
-if($('.prose')){
-  var dl=d.createElement('div');dl.className='dl';dl.innerHTML='<i></i>';d.body.appendChild(dl);
-  var up=function(){var m=root.scrollHeight-innerHeight;dl.style.setProperty('--p',(m>0?Math.min(100,scrollY/m*100):0)+'%')};
-  addEventListener('scroll',up,{passive:true});up()}
 })();

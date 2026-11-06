@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import Logo from '../../components/Logo.astro';
 import cfg from '../../../site.config.json';
 import { ui, type Lang } from '../../i18n';
 export function getStaticPaths() { return [{ params: { lang: undefined } }, { params: { lang: 'en' } }]; }
@@ -12,38 +11,43 @@ const load = async (kind: 'projects' | 'writing' | 'links') =>
     .sort((a, b) => Number(b.data.pin) - Number(a.data.pin) || +b.data.date - +a.data.date)
     .map((e) => { const slug = e.id.split('/').pop(); const ext = kind === 'links';
       return { ...e.data, vt: ext ? undefined : `${kind}-${slug}`, ext, href: ext ? e.data.url ?? '#' : `${base}/${kind}/${slug}/` }; });
-const sections = [['work', t.work, t.workSub, await load('projects')], ['notes', t.notes, '', await load('writing')], ['links', t.coll, '', await load('links')]] as const;
 const mods = import.meta.glob('/about.*.md', { eager: true }) as Record<string, any>;
 const about = mods[`/about.${lang}.md`];
 const About = about?.frontmatter?.show ? about.Content : null;
+const secs = [['work', t.work, await load('projects')], ['notes', t.notes, await load('writing')], ['links', t.coll, await load('links')]]
+  .filter(([, , items]) => (items as any[]).length > 0) as [string, string, any[]][];
+const idx = [...secs.map(([id, title]) => [id, title]), ...(About ? [['about', t.about]] : [])];
+const line = `${t.h1[0]} ${t.h1[1]}`;
 const now = cfg.now[lang];
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 ---
 <Base title="KUDEW" description={t.desc} lang={lang} path="/" home>
-  <div class="hero" id="hero">
-    {cfg.dew && <canvas id="dew" aria-hidden="true"></canvas>}
-    <div class="logo" id="logo" role="img" aria-label="KUDEW"><Logo /></div>
-    <div class="tag" style="margin-top:28px">{t.tag}</div>
-    <h1>{t.h1[0]}<br /><em>{t.h1[1]}</em></h1>
-    <p class="intro">{t.intro}</p>
-    {now && <p class="tag">Now — {now}</p>}
-    {cfg.dew && <p class="tag">{t.hint}</p>}
-  </div>
-  {sections.map(([id, title, sub, items]) => items.length > 0 && (
-    <section id={id}>
-      <h2>{title}</h2>
-      {sub && <p class="sub">{sub}</p>}
-      {id === 'links' && <p style="text-align:right;margin:-8px 0 4px"><button id="rnd">{t.rnd} ↗</button></p>}
-      {items.map((i) => (
-        <a class="row" href={i.href} target={i.ext ? '_blank' : undefined} rel={i.ext ? 'noopener' : undefined}
-          data-t={i.title} data-s={i.summary} data-g={i.tags.join(' · ')} data-c={i.cover}>
-          <i class="dot"></i>
-          <span class="main"><b style={i.vt ? `view-transition-name:${i.vt}` : undefined}>{i.title}</b><span>{i.summary}</span></span>
-          <time datetime={fmt(i.date)}>{fmt(i.date)}</time>
-        </a>
-      ))}
+  <section class="hero" id="hero">
+    <h1 class="mark">KUDEW</h1>
+    <div class="hr">
+      <p class="tag">{t.tag}{now && <><br />Now — {now}</>}</p>
+      <p class="tag cue">↓ {t.scroll}</p>
+    </div>
+  </section>
+  <div class="mq" aria-hidden="true"><div class="t" id="mqt">
+    {[0, 1].map(() => <Fragment><span>{line}</span><i>✦</i><span class="o">{line}</span><i>✦</i></Fragment>)}
+  </div></div>
+  <p class="stm" id="stm">{t.intro}</p>
+  {secs.map(([id, title, items], n) => (
+    <section class="sec" id={id}>
+      <h2><b>{String(n + 1).padStart(2, '0')}</b> {title}{id === 'links' && <button id="rnd">{t.rnd} ↗</button>}</h2>
+      <div class="list">
+        {items.map((i) => (
+          <a class="row" href={i.href} target={i.ext ? '_blank' : undefined} rel={i.ext ? 'noopener' : undefined}
+            data-t={i.title} data-s={i.summary} data-g={i.tags.join(' · ')} data-c={i.cover}>
+            <span class="n"></span>
+            <span class="main"><b style={i.vt ? `view-transition-name:${i.vt}` : undefined}>{i.title}</b><span>{i.summary}</span></span>
+            <time datetime={fmt(i.date)}>{fmt(i.date)}</time>
+          </a>
+        ))}
+      </div>
     </section>
   ))}
-  {About && <section id="about"><h2>{t.about}</h2><div class="about"><About /></div></section>}
-  {cfg.dew && <script is:inline src="/home.js"></script>}
+  {About && <section class="sec" id="about"><h2><b>{String(secs.length + 1).padStart(2, '0')}</b> {t.about}</h2><div class="about"><About /></div></section>}
+  <nav class="idx" aria-label="Sections">{idx.map(([id, title], n) => <a href={`#${id}`} aria-label={title} title={title}>{String(n + 1).padStart(2, '0')}</a>)}</nav>
 </Base>

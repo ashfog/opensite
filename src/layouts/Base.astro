@@ -1,6 +1,5 @@
 ---
-import '@fontsource/instrument-serif/latin-400.css';
-import '@fontsource/instrument-serif/latin-400-italic.css';
+import '@fontsource-variable/bricolage-grotesque/wdth.css';
 import '@fontsource-variable/inter/wght.css';
 import '@fontsource/jetbrains-mono/latin-400.css';
 import '../styles/global.css';
@@ -37,18 +36,23 @@ const links = [['GitHub', cfg.social.github], ['X', cfg.social.x], ['Email', cfg
   <script is:inline>try{var t=localStorage.getItem('kudew-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
   {ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
 </head>
-<body>
-  <div class="ctl">
-    <a href={(other === 'en' ? '/en' : '') + path} hreflang={other === 'en' ? 'en' : 'zh-CN'} aria-label={t.otherLabel}>{t.other}</a>
-    <button id="pal" aria-label="Search (Ctrl/Cmd + K)">⌘K</button>
-    <button id="theme" aria-label="Toggle light / dark">◐</button>
-  </div>
-  <main class="wrap"><slot /></main>
-  <footer class="wrap foot">
+<body class={home ? 'home' : ''}>
+  <i class="bar"></i>
+  <header class="top">
+    <a class="brand" href={lang === 'en' ? '/en/' : '/'}>KUDEW</a>
+    <div class="ctl">
+      <a href={(other === 'en' ? '/en' : '') + path} hreflang={other === 'en' ? 'en' : 'zh-CN'} aria-label={t.otherLabel}>{t.other}</a>
+      <button id="pal" aria-label="Search (Ctrl/Cmd + K)">⌘K</button>
+      <button id="theme" aria-label="Toggle light / dark">◐</button>
+    </div>
+  </header>
+  <main class={home ? '' : 'wrap'}><slot /></main>
+  <footer class="foot">
     <span>KUDEW © {new Date().getFullYear()}</span><span>{t.footer}</span>
     <span>{links.map(([n, h]) => <a href={h as string}>{n}</a>)}</span>
   </footer>
   <script is:inline src="/theme.js"></script>
   <script is:inline src="/extras.js"></script>
+  <script is:inline src="/scroll.js"></script>
 </body>
 </html>

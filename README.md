@@ -29,7 +29,6 @@ pin: false               # true 则置顶
 ## site.config.json
 - `social.github / x / email`：留空则不显示
 - `now.zh / now.en`：首页一行「Now」，留空则不显示
-- `dew`：`false` 可关闭首屏「凝露」互动
 
 ## 部署到 Cloudflare Pages
 1. 推送到 GitHub。
@@ -37,7 +36,8 @@ pin: false               # true 则置顶
 3. 绑定域名 kudew.com。
 
 ## 功能
-命令面板（Ctrl/Cmd+K 或 `/`）、项目悬停预览（桌面）、露线阅读进度（文章页）、页面转场与标题共享元素（原生 View Transitions）、RSS（`/rss.xml`、`/en/rss.xml`）、Collected（`content/*/links/`，`url` 必填）、About（`about.zh.md` / `about.en.md`，把 `show` 改为 `true` 才显示）。
+滚动互动：首屏大字标随滚动收缩并变细、跑马灯随滚动速度和方向加速或反向、简介逐词高亮、右侧章节索引、顶部阅读进度条、列表滚动入场（原生 scroll-driven animations，不支持时直接显示）。
+另有命令面板（Ctrl/Cmd+K 或 `/`）、项目悬停预览（桌面）、页面转场、RSS、Collected、About（`show: true` 才显示）。
 
 ## 还没做
-Collected 的分类筛选与 FLIP 动画；按文章生成 OG 图（目前使用 `public/og-default.png`，字体为系统衬线，可自行替换）。
+Collected 的分类筛选；按文章生成 OG 图（目前使用 `public/og-default.png`）。
