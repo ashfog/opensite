@@ -59,3 +59,6 @@ h1.post{font:800 clamp(2.2rem,7vw,3.6rem)/1.05 var(--disp);letter-spacing:-.03em
 @media(max-width:900px){.idx{display:none}.sec{grid-template-columns:1fr}.sec>h2{position:static}}
 @media(max-width:520px){.row{grid-template-columns:32px 1fr}.row time{grid-column:2}.hr{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+.prose p{font-size:18px;line-height:1.95;margin:0 0 1.3em}
+.prose blockquote{margin:1.6em 0;padding-left:1.1em;border-left:2px solid var(--acc);color:var(--mute)}.prose blockquote p{margin:0}
+.prose hr{border:0;border-top:1px solid var(--line);margin:3em 0}
